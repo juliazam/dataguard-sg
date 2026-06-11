@@ -29,36 +29,47 @@ def fetch_data(n: int, offset: int) -> pd.DataFrame:
 if __name__ == "__main__":
     batch_size = settings['pipeline']['sample_size']
     sample_df = fetch_sample(batch_size)
-    print(f"Размер DataFrame: {sample_df.shape}")
-    print(f"Список колонок: {sample_df.columns.tolist()}")
-    key_cols = [
-        'Record_ID',
-        'Covered_Recipient_Type',
-        'Covered_Recipient_First_Name',
-        'Covered_Recipient_Last_Name',
-        'Recipient_State',
-        'Recipient_Country',
-        'Total_Amount_of_Payment_USDollars',
-        'Date_of_Payment',
-        'Nature_of_Payment_or_Transfer_of_Value',
-        'Form_of_Payment_or_Transfer_of_Value',
-        'Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_Name',
-        'Program_Year',
-    ]
+    # print(f"Размер DataFrame: {sample_df.shape}")
+    # print(f"Список колонок: {sample_df.columns.tolist()}")
+    # key_cols = [
+    #     'Record_ID',
+    #     'Covered_Recipient_Type',
+    #     'Covered_Recipient_First_Name',
+    #     'Covered_Recipient_Last_Name',
+    #     'Recipient_State',
+    #     'Recipient_Country',
+    #     'Total_Amount_of_Payment_USDollars',
+    #     'Date_of_Payment',
+    #     'Nature_of_Payment_or_Transfer_of_Value',
+    #     'Form_of_Payment_or_Transfer_of_Value',
+    #     'Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_Name',
+    #     'Program_Year',
+    # ]
 
-    print(sample_df[key_cols].head(10).to_string())
+    # print(sample_df[key_cols].head(10).to_string())
 
-    print("\nУникальные значения Nature_of_Payment:")
-    print(sample_df['Nature_of_Payment_or_Transfer_of_Value'].value_counts())
+    # print("\nУникальные значения Nature_of_Payment:")
+    # print(sample_df['Nature_of_Payment_or_Transfer_of_Value'].value_counts())
 
-    print("\nУникальные значения Form_of_Payment:")
-    print(sample_df['Form_of_Payment_or_Transfer_of_Value'].value_counts())
+    # print("\nУникальные значения Form_of_Payment:")
+    # print(sample_df['Form_of_Payment_or_Transfer_of_Value'].value_counts())
 
-    print("\nДиапазон сумм (как строки пока):")
-    amounts = sample_df['Total_Amount_of_Payment_USDollars']
-    print(f"Мин: {amounts.min()}, Макс: {amounts.max()}")
-    print(f"Пример значений: {amounts.head(5).tolist()}")
-    print("\nТипы данных:")
-    print(sample_df.dtypes)
-    print("\nПропуски:")
-    print(sample_df.isnull().sum()[sample_df.isnull().sum() > 0])
+    # print("\nДиапазон сумм (как строки пока):")
+    # amounts = sample_df['Total_Amount_of_Payment_USDollars']
+    # print(f"Мин: {amounts.min()}, Макс: {amounts.max()}")
+    # print(f"Пример значений: {amounts.head(5).tolist()}")
+    # print("\nТипы данных:")
+    # print(sample_df.dtypes)
+    # print("\nПропуски:")
+    # print(sample_df.isnull().sum()[sample_df.isnull().sum() > 0])
+
+    # print(sample_df['Form_of_Payment_or_Transfer_of_Value'].unique())
+    # print(sample_df['Nature_of_Payment_or_Transfer_of_Value'].unique())
+    # print(sample_df['Covered_Recipient_Type'].unique())
+
+    print("Nature of Payment:")
+    print(sorted(sample_df['Nature_of_Payment_or_Transfer_of_Value'].unique()))
+    print("\nForm of Payment:")
+    print(sorted(sample_df['Form_of_Payment_or_Transfer_of_Value'].unique()))
+    print("\nCovered Recipient Type:")
+    print(sorted(sample_df['Covered_Recipient_Type'].unique()))
