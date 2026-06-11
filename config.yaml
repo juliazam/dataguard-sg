@@ -1,0 +1,12 @@
+data_source:
+  name: "CMS Open Payments 2024"
+  base_url: "https://openpaymentsdata.cms.gov/api/1/datastore/sql"
+  distribution_id: "9323b84e-cda3-5f6b-a501-b76926c7c035"
+  download_url: "https://download.cms.gov/openpayments/PGYR2024_P01232026_01102026/OP_DTL_GNRL_PGYR2024_P01232026_01102026.csv"
+
+pipeline:
+  batch_size: 10000
+  sample_size: 500
+  raw_data_path: "data/raw"
+  output_path: "data/output"
+  reports_path: "reports/profiling"
