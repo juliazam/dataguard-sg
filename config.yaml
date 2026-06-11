@@ -5,8 +5,10 @@ data_source:
   download_url: "https://download.cms.gov/openpayments/PGYR2024_P01232026_01102026/OP_DTL_GNRL_PGYR2024_P01232026_01102026.csv"
 
 pipeline:
-  batch_size: 10000
+  batch_size: 500
   sample_size: 500
+  profiling_size: 10000
   raw_data_path: "data/raw"
   output_path: "data/output"
   reports_path: "reports/profiling"
+  total_rows: 15385047
