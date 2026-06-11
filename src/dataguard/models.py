@@ -1,0 +1,80 @@
+'''Pydantic Payment model'''
+from typing import Optional, Annotated
+from pydantic import BaseModel, Field, field_validator, model_validator
+from datetime import date, datetime, timezone
+import random
+import uuid
+
+def generate_uuid() -> str:
+    '''Generates UUID'''
+    return str(uuid.uuid4())
+
+def generate_risk_score() -> float:
+    '''Generates risk_score'''
+    return round(random.uniform(0.0, 1.0), 4)
+
+def generate_payment_channel() -> str:
+    '''Generates payment_channel'''
+    return random.choice(["wire", "check", "ACH", "cash"])
+
+def generate_utc_now() -> datetime:
+    '''Generates UTC'''
+    return datetime.now(timezone.utc)
+
+class Payment(BaseModel):
+    '''Payment Pydantic model'''
+    record_id: str
+    covered_recipient_type: str
+    covered_recipient_first_name: Optional[str] = None
+    covered_recipient_last_name: Optional[str] = None
+    recipient_state: Optional[str] = None
+    recipient_country: str
+    total_amount_usd: float
+    date_of_payment: date
+    nature_of_payment: str
+    form_of_payment: str
+    manufacturer_name: Optional[str] = None
+    transaction_id: str = Field(default_factory=generate_uuid)
+    risk_score: float = Field(default_factory=generate_risk_score)
+    is_flagged: bool = False
+    payment_channel: str = Field(default_factory=generate_payment_channel)
+    processing_status: str = 'pending'
+    ingestion_timestamp: datetime = Field(default_factory=generate_utc_now)
+    program_year: Annotated[int, Field(ge=2013, le=2026)]
+
+    @field_validator("date_of_payment", mode="before")
+    @classmethod
+    def parse_date_of_payment(cls, value: str) -> date:
+        '''Validates day of payment'''
+        if isinstance(value, str):
+            return datetime.strptime(value, "%m/%d/%Y").date()
+        return value
+
+    @model_validator(mode="after")
+    def compute_is_flagged(self) -> "Payment":
+        '''Marks transaction if risk_score  > 0.75'''
+        self.is_flagged = self.risk_score > 0.75
+        return self
+
+if __name__ == "__main__":
+    # Raw data simulation
+    raw_data = {
+        "record_id": "REC12345",
+        "covered_recipient_type": "Covered Recipient Physician",
+        "covered_recipient_first_name": "John",
+        "covered_recipient_last_name": "Doe",
+        "recipient_state": "CA",
+        "recipient_country": "United States",
+        "total_amount_usd": "19223.51",  # str -> float
+        "date_of_payment": "08/22/2024",  # str MM/DD/YYYY -> date
+        "nature_of_payment": "Consulting Fee",
+        "form_of_payment": "Cash or Cash Equivalent",
+        "manufacturer_name": "PharmaCorp",
+        "program_year": "2024",  # str -> int
+    }
+
+    # Model initialization (Pydantic v2)
+    payment_obj = Payment(**raw_data)
+
+    # Print result in JSON
+    print(payment_obj.model_dump_json(indent=2))
