@@ -29,7 +29,7 @@ def fetch_data(n: int, offset: int, retries: int = 3) -> pd.DataFrame:
 
     for attempt in range(1, retries + 1):
         try:
-            response = requests.get(base_url, params=params, timeout=30)
+            response = requests.get(base_url, params=params, timeout=60)
             response.raise_for_status()
             return pd.DataFrame(response.json())
         except requests.exceptions.Timeout:
