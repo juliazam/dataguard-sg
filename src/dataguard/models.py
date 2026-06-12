@@ -1,10 +1,10 @@
 '''Pydantic Payment model'''
 from typing import Optional, Annotated
-from pydantic import BaseModel, Field, field_validator, model_validator
 from datetime import date, datetime, timezone
 from enum import Enum
 import random
 import uuid
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 class NatureOfPayment(str, Enum):
     ACQUISITIONS = "Acquisitions"
@@ -90,6 +90,8 @@ class Payment(BaseModel):
         return self
 
 if __name__ == "__main__":
+    from dataguard.logger import get_logger
+    logger = get_logger(__name__)
     # Raw data simulation
     raw_data = {
         "record_id": "REC12345",
@@ -110,4 +112,4 @@ if __name__ == "__main__":
     payment_obj = Payment(**raw_data)
 
     # Print result in JSON
-    print(payment_obj.model_dump_json(indent=2))
+    logger.debug(payment_obj.model_dump_json(indent=2))
