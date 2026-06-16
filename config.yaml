@@ -14,3 +14,7 @@ pipeline:
   contracts_path: "contracts"
   total_rows: 15385047
   threshold: 0.95
+
+alerting:
+  invalid_rate_threshold: 0.05    # 5%
+  email_enabled: false
