@@ -3,6 +3,7 @@
 import random
 import time
 from pathlib import Path
+from math import ceil
 import pandas as pd
 import requests
 import yaml
@@ -52,7 +53,7 @@ def fetch_random_sample(n: int) -> pd.DataFrame:
     total_rows = settings["pipeline"]["total_rows"]
     max_offset = total_rows - batch_size
 
-    batch_count = n // batch_size
+    batch_count = ceil(n / batch_size)
     batches = []
     for _ in range(batch_count):
         offset = random.randint(0, max_offset)

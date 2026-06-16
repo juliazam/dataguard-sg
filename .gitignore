@@ -3,3 +3,5 @@
 logs/
 reports/profiling/*.html
 reports/profiling/*.json
+data/output/last_offset.json
+data/output/lineage_log.jsonl

@@ -1,14 +1,38 @@
 '''Run pipelina'''
+import json
 import uuid
 from pathlib import Path
 import yaml
 from dataguard.alerts import check_and_alert
 from dataguard.ge_validator import run_expectations
 from dataguard.lineage import LineageTracker, create_lineage_record
-from dataguard.loader import fetch_random_sample
+from dataguard.loader import fetch_data
 from dataguard.reconciliation import reconcile_counts
 from dataguard.validator import validate_payments
 
+def load_last_offset(path: Path) -> int:
+    '''Reads the last processed offset, returns 0 if file doesn't exist.'''
+    path = Path(path)
+
+    if not path.exists():
+        return 0
+
+    try:
+        with open(path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            return data.get("last_offset", 0)
+    except (json.JSONDecodeError, TypeError):
+        return 0
+
+def save_last_offset(path: Path, new_offset: int) -> None:
+    '''Saves the new offset after a successful run.'''
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    data = {"last_offset": new_offset}
+
+    with open(path, 'w', encoding='utf-8') as file:
+        json.dump(data, file, indent=2, ensure_ascii=False)
 
 def run_pipeline(n_rows: int) -> dict:
     '''Runs pipeline'''
@@ -19,12 +43,15 @@ def run_pipeline(n_rows: int) -> dict:
         config = yaml.safe_load(f)
 
     output_directory = project_root / config['pipeline']['output_path']
+    offset_file_path = output_directory / 'last_offset.json'
+    current_offset = load_last_offset(offset_file_path)
+
     tracker = LineageTracker(output_directory)
 
     pipeline_run_id = str(uuid.uuid4())
 
     # 1 Fetch
-    sample_df = fetch_random_sample(n_rows)
+    sample_df = fetch_data(n_rows, offset=current_offset)
     lineage_record = create_lineage_record(
         pipeline_run_id=pipeline_run_id,
         step_name='fetch',
@@ -80,6 +107,9 @@ def run_pipeline(n_rows: int) -> dict:
     )
     tracker.record(lineage_record)
 
+    next_offset = current_offset + n_rows
+    save_last_offset(offset_file_path, next_offset)
+    
     return {
         "pipeline_run_id": pipeline_run_id,
         "rows_fetched": len(sample_df),
@@ -89,45 +119,3 @@ def run_pipeline(n_rows: int) -> dict:
         "ge_success": ge_result["success"],
         "alert_result": alerts
     }
-
-if __name__ == "__main__":
-    pipeline_res = run_pipeline(500)
-    print(pipeline_res)
-
-    # print("\n=== GE FAILURES DETAIL (re-run for diagnostics) ===")
-    # diag_df = fetch_random_sample(500)
-    # diag_ge = run_expectations(diag_df)
-    # for result in diag_ge["results"]:
-    #     if not result.success:
-    #         print(f"Expectation: {result.expectation_config.type}")
-    #         print(f"Column: {result.expectation_config.kwargs.get('column')}")
-    #         print(f"Result: {result.result}")
-    #         print("---")
-    # df = fetch_random_sample(2000)
-    # values = df['Nature_of_Payment_or_Transfer_of_Value'].unique()
-    # for v in sorted(values):
-    #     print(repr(v))
-
-    # import requests
-    # import yaml
-
-    # with open("config.yaml") as f:
-    #     cfg = yaml.safe_load(f)
-
-    # base_url = cfg['data_source']['base_url']
-    # dist_id = cfg['data_source']['distribution_id']
-
-    # all_values = set()
-    # offsets = [0, 500000, 1000000, 3000000, 5000000, 7000000, 9000000, 11000000, 13000000, 14500000]
-
-    # for offset in offsets:
-    #     query = f"[SELECT Nature_of_Payment_or_Transfer_of_Value FROM {dist_id}][LIMIT 500 OFFSET {offset}]"
-    #     response = requests.get(base_url, params={"query": query}, timeout=30)
-    #     data = response.json()
-    #     for row in data:
-    #         all_values.add(row['Nature_of_Payment_or_Transfer_of_Value'])
-    #     print(f"offset={offset}, total unique so far: {len(all_values)}")
-
-    # print("\n=== ALL UNIQUE VALUES ===")
-    # for v in sorted(all_values):
-    #     print(repr(v))
