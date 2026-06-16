@@ -17,13 +17,11 @@ with open(config_path, "r", encoding="utf-8") as f:
 class LineageRecord(BaseModel):
     '''Lineage recors pydantic model'''
     pipeline_run_id: str            # Unique ID of the pipeline run (UUID)
+    step_name: str                  # "fetch", "validate", "reconciliation"...
     source_name: str                # Name of the data source
     source_url: str                 # URL where the data was fetched from
-    ingestion_timestamp: datetime
-    rows_ingested: int              # Number of total rows received
-    rows_valid: int                 # Number of rows that passed validation
-    rows_invalid: int               # Number of rows that failed validation
-    validation_success: bool        # Did all Great Expectations checks pass?
+    timestamp: datetime
+    details: dict
     pipeline_version: str           # Version parsed from pyproject.toml
 
 class LineageTracker:
@@ -62,8 +60,8 @@ class LineageTracker:
                     logger.error('Skipping corrupted line in lineage log: %s', e)
         return history
 
-def create_lineage_record(pipeline_run_id: str, rows_ingested: int, rows_valid: int,
-    rows_invalid: int, validation_success: bool) -> LineageRecord:
+def create_lineage_record(pipeline_run_id: str, step_name: str,
+    details: dict) -> LineageRecord:
     '''Create lineage record'''
     toml_path = _PROJECT_ROOT / "pyproject.toml"
 
@@ -76,13 +74,11 @@ def create_lineage_record(pipeline_run_id: str, rows_ingested: int, rows_valid: 
 
     return LineageRecord(
         pipeline_run_id=pipeline_run_id,
+        step_name=step_name,
         source_name=source_name,
         source_url=source_url,
-        ingestion_timestamp=datetime.now(timezone.utc),
-        rows_ingested=rows_ingested,
-        rows_valid=rows_valid,
-        rows_invalid=rows_invalid,
-        validation_success=validation_success,
+        timestamp=datetime.now(timezone.utc),
+        details=details,
         pipeline_version=pipeline_version,
     )
 
@@ -97,10 +93,8 @@ if __name__ == "__main__":
     print("=== 1. Creating Lineage record ===")
     test_record = create_lineage_record(
         pipeline_run_id=TEST_RUN_ID,
-        rows_ingested=1000,
-        rows_valid=950,
-        rows_invalid=50,
-        validation_success=False,
+        step_name="fetch",
+        details={"rows_fetched": 1000}
     )
     print(test_record.model_dump_json(indent=2))
 
