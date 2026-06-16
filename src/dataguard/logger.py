@@ -17,7 +17,7 @@ def get_logger(name: str) -> logging.Logger:
     )
 
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(logging.DEBUG)
     console_handler.setFormatter(formatter)
 
     log_dir = Path(__file__).parent.parent.parent / "logs"

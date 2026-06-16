@@ -1,0 +1,168 @@
+{
+  "$defs": {
+    "CoveredRecipientType": {
+      "enum": [
+        "Covered Recipient Physician",
+        "Covered Recipient Non-Physician Practitioner",
+        "Covered Recipient Teaching Hospital"
+      ],
+      "title": "CoveredRecipientType",
+      "type": "string"
+    },
+    "FormOfPayment": {
+      "enum": [
+        "Cash or cash equivalent",
+        "In-kind items and services",
+        "Stock"
+      ],
+      "title": "FormOfPayment",
+      "type": "string"
+    },
+    "NatureOfPayment": {
+      "enum": [
+        "Acquisitions",
+        "Charitable Contribution",
+        "Compensation for Non-Consulting Services",
+        "Compensation for Serving as Faculty or as a Speaker for a Medical Education Program",
+        "Consulting Fee",
+        "Current or Prospective Ownership or Investment Interest",
+        "Debt Forgiveness",
+        "Education",
+        "Entertainment",
+        "Food and Beverage",
+        "Gift",
+        "Grant",
+        "Honoraria",
+        "Long-term Medical Supply or Device Loan",
+        "Research",
+        "Royalty or License",
+        "Space Rental or Facility Fees",
+        "Travel and Lodging"
+      ],
+      "title": "NatureOfPayment",
+      "type": "string"
+    }
+  },
+  "description": "Payment Pydantic model",
+  "properties": {
+    "record_id": {
+      "title": "Record Id",
+      "type": "string"
+    },
+    "covered_recipient_type": {
+      "$ref": "#/$defs/CoveredRecipientType"
+    },
+    "covered_recipient_first_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Covered Recipient First Name"
+    },
+    "covered_recipient_last_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Covered Recipient Last Name"
+    },
+    "recipient_state": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Recipient State"
+    },
+    "recipient_country": {
+      "title": "Recipient Country",
+      "type": "string"
+    },
+    "total_amount_usd": {
+      "title": "Total Amount Usd",
+      "type": "number"
+    },
+    "date_of_payment": {
+      "format": "date",
+      "title": "Date Of Payment",
+      "type": "string"
+    },
+    "nature_of_payment": {
+      "$ref": "#/$defs/NatureOfPayment"
+    },
+    "form_of_payment": {
+      "$ref": "#/$defs/FormOfPayment"
+    },
+    "manufacturer_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Manufacturer Name"
+    },
+    "transaction_id": {
+      "title": "Transaction Id",
+      "type": "string"
+    },
+    "risk_score": {
+      "title": "Risk Score",
+      "type": "number"
+    },
+    "is_flagged": {
+      "default": false,
+      "title": "Is Flagged",
+      "type": "boolean"
+    },
+    "payment_channel": {
+      "title": "Payment Channel",
+      "type": "string"
+    },
+    "processing_status": {
+      "default": "pending",
+      "title": "Processing Status",
+      "type": "string"
+    },
+    "ingestion_timestamp": {
+      "format": "date-time",
+      "title": "Ingestion Timestamp",
+      "type": "string"
+    },
+    "program_year": {
+      "maximum": 2026,
+      "minimum": 2013,
+      "title": "Program Year",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "record_id",
+    "covered_recipient_type",
+    "recipient_country",
+    "total_amount_usd",
+    "date_of_payment",
+    "nature_of_payment",
+    "form_of_payment",
+    "program_year"
+  ],
+  "title": "Payment",
+  "type": "object"
+}
