@@ -21,7 +21,7 @@ def run_expectations(df: pd.DataFrame) -> dict:
     df["Total_Amount_of_Payment_USDollars"] = pd.to_numeric(
         df["Total_Amount_of_Payment_USDollars"], errors="coerce"
     )
-    
+
     context = ge.get_context(mode='ephemeral')
 
     data_source = context.data_sources.add_pandas('payments_source')
