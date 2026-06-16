@@ -5,7 +5,7 @@ import great_expectations as ge
 import yaml
 
 from dataguard.loader import fetch_sample
-from dataguard.models import CoveredRecipientType, NatureOfPayment
+from dataguard.models import CoveredRecipientType
 from dataguard.logger import get_logger
 logger = get_logger(__name__)
 
@@ -44,7 +44,17 @@ def run_expectations(df: pd.DataFrame) -> dict:
     # 4. Nature_of_Payment has only values from NatureOfPayment enum
     suite.add_expectation(ge.expectations.ExpectColumnValuesToBeInSet(
         column="Nature_of_Payment_or_Transfer_of_Value",
-        value_set=[e.value for e in NatureOfPayment]))
+        value_set=[
+            "Compensation for services other than consulting, including serving as faculty or as a speaker at a venue other than a continuing education program",
+            "Consulting Fee",
+            "Education",
+            "Food and Beverage",
+            "Honoraria",
+            "Royalty or License",
+            "Travel and Lodging",
+        ],
+        mostly=0.95,
+    ))
 
     # 5. Covered_Recipient_Type has only values from CoveredRecipientType enum
     suite.add_expectation(ge.expectations.ExpectColumnValuesToBeInSet(

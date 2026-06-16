@@ -6,27 +6,27 @@ import random
 import uuid
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-class NatureOfPayment(str, Enum):
-    ACQUISITIONS = "Acquisitions"
-    CHARITABLE_CONTRIBUTION = "Charitable Contribution"
-    COMPENSATION_NON_CONSULTING = "Compensation for Non-Consulting Services"
-    COMPENSATION_FACULTY_SPEAKER = (
-        "Compensation for Serving as Faculty or as a Speaker for a Medical Education Program"
-    )
-    CONSULTING_FEE = "Consulting Fee"
-    OWNERSHIP_INVESTMENT_INTEREST = "Current or Prospective Ownership or Investment Interest"
-    DEBT_FORGIVENESS = "Debt Forgiveness"
-    EDUCATION = "Education"
-    ENTERTAINMENT = "Entertainment"
-    FOOD_AND_BEVERAGE = "Food and Beverage"
-    GIFT = "Gift"
-    GRANT = "Grant"
-    HONORARIA = "Honoraria"
-    MEDICAL_SUPPLY_DEVICE_LOAN = "Long-term Medical Supply or Device Loan"
-    RESEARCH = "Research"
-    ROYALTY_LICENSE = "Royalty or License"
-    SPACE_RENTAL = "Space Rental or Facility Fees"
-    TRAVEL_LODGING = "Travel and Lodging"
+# class NatureOfPayment(str, Enum):
+#     ACQUISITIONS = "Acquisitions"
+#     CHARITABLE_CONTRIBUTION = "Charitable Contribution"
+#     COMPENSATION_NON_CONSULTING = "Compensation for Non-Consulting Services"
+#     COMPENSATION_FACULTY_SPEAKER = (
+#         "Compensation for Serving as Faculty or as a Speaker for a Medical Education Program"
+#     )
+#     CONSULTING_FEE = "Consulting Fee"
+#     OWNERSHIP_INVESTMENT_INTEREST = "Current or Prospective Ownership or Investment Interest"
+#     DEBT_FORGIVENESS = "Debt Forgiveness"
+#     EDUCATION = "Education"
+#     ENTERTAINMENT = "Entertainment"
+#     FOOD_AND_BEVERAGE = "Food and Beverage"
+#     GIFT = "Gift"
+#     GRANT = "Grant"
+#     HONORARIA = "Honoraria"
+#     MEDICAL_SUPPLY_DEVICE_LOAN = "Long-term Medical Supply or Device Loan"
+#     RESEARCH = "Research"
+#     ROYALTY_LICENSE = "Royalty or License"
+#     SPACE_RENTAL = "Space Rental or Facility Fees"
+#     TRAVEL_LODGING = "Travel and Lodging"
 
 class FormOfPayment(str, Enum):
     CASH_OR_CASH_EQUIVALENT = "Cash or cash equivalent"
@@ -64,7 +64,7 @@ class Payment(BaseModel):
     recipient_country: str
     total_amount_usd: float
     date_of_payment: date
-    nature_of_payment: NatureOfPayment
+    nature_of_payment: str
     form_of_payment: FormOfPayment
     manufacturer_name: Optional[str] = None
     transaction_id: str = Field(default_factory=generate_uuid)

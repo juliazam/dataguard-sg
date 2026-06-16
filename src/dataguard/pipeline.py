@@ -93,3 +93,41 @@ def run_pipeline(n_rows: int) -> dict:
 if __name__ == "__main__":
     pipeline_res = run_pipeline(500)
     print(pipeline_res)
+
+    # print("\n=== GE FAILURES DETAIL (re-run for diagnostics) ===")
+    # diag_df = fetch_random_sample(500)
+    # diag_ge = run_expectations(diag_df)
+    # for result in diag_ge["results"]:
+    #     if not result.success:
+    #         print(f"Expectation: {result.expectation_config.type}")
+    #         print(f"Column: {result.expectation_config.kwargs.get('column')}")
+    #         print(f"Result: {result.result}")
+    #         print("---")
+    # df = fetch_random_sample(2000)
+    # values = df['Nature_of_Payment_or_Transfer_of_Value'].unique()
+    # for v in sorted(values):
+    #     print(repr(v))
+
+    # import requests
+    # import yaml
+
+    # with open("config.yaml") as f:
+    #     cfg = yaml.safe_load(f)
+
+    # base_url = cfg['data_source']['base_url']
+    # dist_id = cfg['data_source']['distribution_id']
+
+    # all_values = set()
+    # offsets = [0, 500000, 1000000, 3000000, 5000000, 7000000, 9000000, 11000000, 13000000, 14500000]
+
+    # for offset in offsets:
+    #     query = f"[SELECT Nature_of_Payment_or_Transfer_of_Value FROM {dist_id}][LIMIT 500 OFFSET {offset}]"
+    #     response = requests.get(base_url, params={"query": query}, timeout=30)
+    #     data = response.json()
+    #     for row in data:
+    #         all_values.add(row['Nature_of_Payment_or_Transfer_of_Value'])
+    #     print(f"offset={offset}, total unique so far: {len(all_values)}")
+
+    # print("\n=== ALL UNIQUE VALUES ===")
+    # for v in sorted(all_values):
+    #     print(repr(v))
