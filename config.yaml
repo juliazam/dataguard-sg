@@ -12,3 +12,4 @@ pipeline:
   output_path: "data/output"
   reports_path: "reports/profiling"
   total_rows: 15385047
+  threshold: 0.95
