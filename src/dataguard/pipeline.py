@@ -2,6 +2,7 @@
 import json
 import uuid
 from pathlib import Path
+import pandas as pd
 import yaml
 from dataguard.alerts import check_and_alert
 from dataguard.ge_validator import run_expectations
@@ -109,7 +110,23 @@ def run_pipeline(n_rows: int) -> dict:
 
     next_offset = current_offset + n_rows
     save_last_offset(offset_file_path, next_offset)
-    
+
+    # Save valid data for future transformation
+    records = [p.model_dump(mode="json") for p in valid_payments]
+    output_df = pd.DataFrame(records)
+    output_path = output_directory / f"validated_payments_{pipeline_run_id}.csv"
+    output_df.to_csv(output_path, index=False)
+
+    lineage_record = create_lineage_record(
+        pipeline_run_id=pipeline_run_id,
+        step_name='save_output',
+        details={
+            "output_file": str(output_path),
+            "rows_saved": len(valid_payments)
+        }
+    )
+    tracker.record(lineage_record)
+
     return {
         "pipeline_run_id": pipeline_run_id,
         "rows_fetched": len(sample_df),

@@ -5,3 +5,4 @@ reports/profiling/*.html
 reports/profiling/*.json
 data/output/last_offset.json
 data/output/lineage_log.jsonl
+data/output/validated_payments_*.csv
