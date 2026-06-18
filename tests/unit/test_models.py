@@ -1,4 +1,5 @@
 '''Checking Payment pydantic model'''
+# pylint: disable=redefined-outer-name
 import pytest
 from pydantic import ValidationError
 from dataguard.models import Payment
