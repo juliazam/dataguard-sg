@@ -35,7 +35,7 @@ def save_last_offset(path: Path, new_offset: int) -> None:
     with open(path, 'w', encoding='utf-8') as file:
         json.dump(data, file, indent=2, ensure_ascii=False)
 
-def run_pipeline(n_rows: int) -> dict:
+def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
     '''Runs pipeline'''
     project_root = Path(__file__).resolve().parents[2]
     config_path = project_root / "config.yaml"
@@ -43,11 +43,14 @@ def run_pipeline(n_rows: int) -> dict:
     with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
-    output_directory = project_root / config['pipeline']['output_path']
-    offset_file_path = output_directory / 'last_offset.json'
+    if output_dir is None:
+        output_dir = project_root / config['pipeline']['output_path']
+
+    # output_dir = project_root / config['pipeline']['output_path']
+    offset_file_path = output_dir / 'last_offset.json'
     current_offset = load_last_offset(offset_file_path)
 
-    tracker = LineageTracker(output_directory)
+    tracker = LineageTracker(output_dir)
 
     pipeline_run_id = str(uuid.uuid4())
 
@@ -114,7 +117,7 @@ def run_pipeline(n_rows: int) -> dict:
     # Save valid data for future transformation
     records = [p.model_dump(mode="json") for p in valid_payments]
     output_df = pd.DataFrame(records)
-    output_path = output_directory / f"validated_payments_{pipeline_run_id}.csv"
+    output_path = output_dir / f"validated_payments_{pipeline_run_id}.csv"
     output_df.to_csv(output_path, index=False)
 
     lineage_record = create_lineage_record(
