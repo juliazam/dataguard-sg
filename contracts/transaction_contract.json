@@ -17,30 +17,6 @@
       ],
       "title": "FormOfPayment",
       "type": "string"
-    },
-    "NatureOfPayment": {
-      "enum": [
-        "Acquisitions",
-        "Charitable Contribution",
-        "Compensation for Non-Consulting Services",
-        "Compensation for Serving as Faculty or as a Speaker for a Medical Education Program",
-        "Consulting Fee",
-        "Current or Prospective Ownership or Investment Interest",
-        "Debt Forgiveness",
-        "Education",
-        "Entertainment",
-        "Food and Beverage",
-        "Gift",
-        "Grant",
-        "Honoraria",
-        "Long-term Medical Supply or Device Loan",
-        "Research",
-        "Royalty or License",
-        "Space Rental or Facility Fees",
-        "Travel and Lodging"
-      ],
-      "title": "NatureOfPayment",
-      "type": "string"
     }
   },
   "description": "Payment Pydantic model",
@@ -102,7 +78,8 @@
       "type": "string"
     },
     "nature_of_payment": {
-      "$ref": "#/$defs/NatureOfPayment"
+      "title": "Nature Of Payment",
+      "type": "string"
     },
     "form_of_payment": {
       "$ref": "#/$defs/FormOfPayment"
