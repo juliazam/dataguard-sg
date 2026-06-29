@@ -56,7 +56,9 @@ def run_expectations(df: pd.DataFrame) -> dict:
         ge.expectations.ExpectColumnValuesToBeInSet(
             column="Nature_of_Payment_or_Transfer_of_Value",
             value_set=[
-                "Compensation for services other than consulting, including serving as faculty or as a speaker at a venue other than a continuing education program",
+                "Compensation for services other than consulting, "
+                "including serving as faculty or as a speaker at a venue "
+                "other than a continuing education program",
                 "Consulting Fee",
                 "Education",
                 "Food and Beverage",

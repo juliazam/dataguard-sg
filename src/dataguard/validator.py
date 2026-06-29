@@ -19,7 +19,9 @@ def validate_payments(df: pd.DataFrame) -> tuple[list[Payment], list[dict]]:
         "Date_of_Payment": "date_of_payment",
         "Nature_of_Payment_or_Transfer_of_Value": "nature_of_payment",
         "Form_of_Payment_or_Transfer_of_Value": "form_of_payment",
-        "Submitting_Applicable_Manufacturer_or_Applicable_GPO_Name": "manufacturer_name",
+        "Submitting_Applicable_Manufacturer_or_Applicable_GPO_Name": (
+            "manufacturer_name"
+        ),
         "Program_Year": "program_year",
     }
 
@@ -52,7 +54,8 @@ if __name__ == "__main__":
     import sys
     from pathlib import Path
 
-    # Add the project root to sys.path so that src.* imports work when running the file directly.
+    # Add the project root to sys.path so that src.*
+    # imports work when running the file directly.
     sys.path.append(str(Path(__file__).resolve().parents[2]))
 
     try:

@@ -6,7 +6,8 @@ logger = get_logger(__name__)
 
 
 def reconcile_counts(rows_fetched: int, rows_valid: int, rows_invalid: int) -> dict:
-    """Reconciles data pipeline row counts to ensure no records were lost or duplicated."""
+    """Reconciles data pipeline row counts
+    to ensure no records were lost or duplicated."""
     rows_accounted = rows_valid + rows_invalid
     discrepancy = rows_fetched - rows_accounted
     is_reconciled = discrepancy == 0
