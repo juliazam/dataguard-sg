@@ -1,9 +1,11 @@
-'''Ckecks if validation is correct'''
+"""Ckecks if validation is correct"""
+
 # pylint: disable=redefined-outer-name
 import pandas as pd
 import pytest
 from dataguard.validator import validate_payments
 from dataguard.models import Payment
+
 
 @pytest.fixture
 def mixed_df():
@@ -39,26 +41,30 @@ def mixed_df():
     ]
     return pd.DataFrame(data)
 
+
 def test_validate_payments_splits_correctly(mixed_df):
-    '''Validates that validation_payments returns valid payments and errors separate'''
+    """Validates that validation_payments returns valid payments and errors separate"""
     valid_payments, validation_errors = validate_payments(mixed_df)
 
     assert len(valid_payments) == 1
     assert len(validation_errors) == 1
 
+
 def test_validate_payments_valid_objects_are_payment_instances(mixed_df):
-    '''Tests that all payments are instances of Payment pydentic model'''
+    """Tests that all payments are instances of Payment pydentic model"""
     payments, _ = validate_payments(mixed_df)
 
     assert len(payments) > 0
     assert all(isinstance(p, Payment) for p in payments)
 
+
 def test_validate_payments_error_contains_record_id(mixed_df):
-    '''Tests that error has correct record_id'''
+    """Tests that error has correct record_id"""
     _, errors = validate_payments(mixed_df)
 
     assert len(errors) > 0
     assert errors[0]["record_id"] == "REC002"
+
 
 @pytest.fixture
 def valid_df():
@@ -94,14 +100,16 @@ def valid_df():
     ]
     return pd.DataFrame(data)
 
+
 def test_validate_payments_all_valid(valid_df):
-    '''Tests if all rows in df are correct, there are no errors'''
+    """Tests if all rows in df are correct, there are no errors"""
     _, errors = validate_payments(valid_df)
 
     assert len(errors) == 0
 
+
 def test_validate_payments_empty_dataframe():
-    '''Tests validate_payments with empty dataframe'''
+    """Tests validate_payments with empty dataframe"""
     payments, errors = validate_payments(pd.DataFrame())
 
     assert len(payments) == 0

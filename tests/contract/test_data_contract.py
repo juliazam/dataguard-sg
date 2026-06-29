@@ -3,16 +3,19 @@ import json
 import jsonschema
 from dataguard.models import Payment
 
+
 def test_contract_file_exists():
     assert Path("contracts/transaction_contract.json").exists()
 
+
 def test_contract_matches_payment_model():
     schema_file = Path("contracts/transaction_contract.json")
-    with open (schema_file, 'r', encoding='utf-8') as file:
+    with open(schema_file, "r", encoding="utf-8") as file:
         schema_from_file = json.load(file)
 
     schema_from_model = Payment.model_json_schema()
     assert schema_from_file == schema_from_model
+
 
 def test_valid_payment_validates_against_contract():
     raw_data = {
@@ -30,7 +33,7 @@ def test_valid_payment_validates_against_contract():
         "program_year": "2024",  # str -> int
     }
     payment = Payment(**raw_data)
-    payment_dict = payment.model_dump(mode='json')
+    payment_dict = payment.model_dump(mode="json")
 
     json_schema = Payment.model_json_schema()
 

@@ -1,4 +1,5 @@
-'''Run pipelina'''
+"""Run pipelina"""
+
 import json
 import uuid
 from pathlib import Path
@@ -11,32 +12,35 @@ from dataguard.loader import fetch_data
 from dataguard.reconciliation import reconcile_counts
 from dataguard.validator import validate_payments
 
+
 def load_last_offset(path: Path) -> int:
-    '''Reads the last processed offset, returns 0 if file doesn't exist.'''
+    """Reads the last processed offset, returns 0 if file doesn't exist."""
     path = Path(path)
 
     if not path.exists():
         return 0
 
     try:
-        with open(path, 'r', encoding='utf-8') as file:
+        with open(path, "r", encoding="utf-8") as file:
             data = json.load(file)
             return data.get("last_offset", 0)
     except (json.JSONDecodeError, TypeError):
         return 0
 
+
 def save_last_offset(path: Path, new_offset: int) -> None:
-    '''Saves the new offset after a successful run.'''
+    """Saves the new offset after a successful run."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     data = {"last_offset": new_offset}
 
-    with open(path, 'w', encoding='utf-8') as file:
+    with open(path, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=2, ensure_ascii=False)
 
+
 def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
-    '''Runs pipeline'''
+    """Runs pipeline"""
     project_root = Path(__file__).resolve().parents[2]
     config_path = project_root / "config.yaml"
 
@@ -44,10 +48,10 @@ def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
         config = yaml.safe_load(f)
 
     if output_dir is None:
-        output_dir = project_root / config['pipeline']['output_path']
+        output_dir = project_root / config["pipeline"]["output_path"]
 
     # output_dir = project_root / config['pipeline']['output_path']
-    offset_file_path = output_dir / 'last_offset.json'
+    offset_file_path = output_dir / "last_offset.json"
     current_offset = load_last_offset(offset_file_path)
 
     tracker = LineageTracker(output_dir)
@@ -58,8 +62,8 @@ def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
     sample_df = fetch_data(n_rows, offset=current_offset)
     lineage_record = create_lineage_record(
         pipeline_run_id=pipeline_run_id,
-        step_name='fetch',
-        details={"rows_fetched": len(sample_df)}
+        step_name="fetch",
+        details={"rows_fetched": len(sample_df)},
     )
     tracker.record(lineage_record)
 
@@ -67,22 +71,24 @@ def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
     valid_payments, validation_errors = validate_payments(sample_df)
     lineage_record = create_lineage_record(
         pipeline_run_id=pipeline_run_id,
-        step_name='validate',
+        step_name="validate",
         details={
             "rows_valid": len(valid_payments),
-            "rows_invalid": len(validation_errors)
-        }
+            "rows_invalid": len(validation_errors),
+        },
     )
     tracker.record(lineage_record)
 
     # 3 Reconcillation
-    reconsile_res = reconcile_counts(rows_fetched=len(sample_df),
-                           rows_valid=len(valid_payments),
-                           rows_invalid=len(validation_errors))
+    reconsile_res = reconcile_counts(
+        rows_fetched=len(sample_df),
+        rows_valid=len(valid_payments),
+        rows_invalid=len(validation_errors),
+    )
     lineage_record = create_lineage_record(
         pipeline_run_id=pipeline_run_id,
-        step_name='reconciliation',
-        details=reconsile_res
+        step_name="reconciliation",
+        details=reconsile_res,
     )
     tracker.record(lineage_record)
 
@@ -90,11 +96,11 @@ def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
     ge_result = run_expectations(sample_df)
     lineage_record = create_lineage_record(
         pipeline_run_id=pipeline_run_id,
-        step_name='ge_checkpoint',
+        step_name="ge_checkpoint",
         details={
             "success": ge_result["success"],
-            "statistics": ge_result["statistics"]
-        }
+            "statistics": ge_result["statistics"],
+        },
     )
     tracker.record(lineage_record)
 
@@ -102,12 +108,10 @@ def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
     alerts = check_and_alert(
         rows_fetched=len(sample_df),
         rows_invalid=len(validation_errors),
-        ge_success=ge_result["success"]
+        ge_success=ge_result["success"],
     )
     lineage_record = create_lineage_record(
-        pipeline_run_id=pipeline_run_id,
-        step_name='alerting',
-        details=alerts
+        pipeline_run_id=pipeline_run_id, step_name="alerting", details=alerts
     )
     tracker.record(lineage_record)
 
@@ -122,11 +126,8 @@ def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
 
     lineage_record = create_lineage_record(
         pipeline_run_id=pipeline_run_id,
-        step_name='save_output',
-        details={
-            "output_file": str(output_path),
-            "rows_saved": len(valid_payments)
-        }
+        step_name="save_output",
+        details={"output_file": str(output_path), "rows_saved": len(valid_payments)},
     )
     tracker.record(lineage_record)
 
@@ -135,7 +136,7 @@ def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
         "rows_fetched": len(sample_df),
         "rows_valid": len(valid_payments),
         "rows_invalid": len(validation_errors),
-        "reconciliation": reconsile_res,    
+        "reconciliation": reconsile_res,
         "ge_success": ge_result["success"],
-        "alert_result": alerts
+        "alert_result": alerts,
     }

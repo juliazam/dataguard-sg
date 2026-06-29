@@ -1,4 +1,5 @@
-'''Alerting'''
+"""Alerting"""
+
 from pathlib import Path
 import yaml
 from dataguard.logger import get_logger
@@ -10,9 +11,10 @@ config_path = _PROJECT_ROOT / "config.yaml"
 with open(config_path, "r", encoding="utf-8") as f:
     config = yaml.safe_load(f)
 
+
 def check_and_alert(rows_fetched: int, rows_invalid: int, ge_success: bool) -> dict:
-    '''Evaluates the pipeline run against data quality thresholds
-    and triggers alerts if requirements are violated.'''
+    """Evaluates the pipeline run against data quality thresholds
+    and triggers alerts if requirements are violated."""
 
     threshold = config.get("alerting", {}).get("invalid_rate_threshold", 0.05)
     alert_sent = False
@@ -25,8 +27,9 @@ def check_and_alert(rows_fetched: int, rows_invalid: int, ge_success: bool) -> d
     threshold_exceeded = invalid_rate > threshold
 
     if not ge_success:
-        logger.warning('Data quality alert: '
-                       'At least one Great Expectations suite check has failed.'
+        logger.warning(
+            "Data quality alert: "
+            "At least one Great Expectations suite check has failed."
         )
 
     if threshold_exceeded:
@@ -52,16 +55,18 @@ def check_and_alert(rows_fetched: int, rows_invalid: int, ge_success: bool) -> d
         "alert_sent": alert_sent,
     }
 
+
 def send_email_alert(message: str) -> None:
-    '''Placeholder for email alerting. In production, this would integrate
+    """Placeholder for email alerting. In production, this would integrate
     with an email service (SendGrid, AWS SES, etc).
-    Currently logs what WOULD be sent.'''
+    Currently logs what WOULD be sent."""
     email_enabled = config.get("alerting", {}).get("email_enabled", False)
     if email_enabled:
         # TODO: integrate real email service
         logger.warning("EMAIL ALERT (enabled - simulated): %s", message)
     else:
         logger.info("EMAIL ALERT (disabled): %s", message)
+
 
 if __name__ == "__main__":
     print("=== SCENARIO 1: All Good ===")

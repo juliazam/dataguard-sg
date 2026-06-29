@@ -8,6 +8,7 @@ import pandas as pd
 import requests
 import yaml
 from dataguard.logger import get_logger
+
 logger = get_logger(__name__)
 
 _CONFIG_PATH = Path(__file__).parent.parent.parent / "config.yaml"
@@ -34,7 +35,9 @@ def fetch_data(n: int, offset: int, retries: int = 3) -> pd.DataFrame:
             response.raise_for_status()
             return pd.DataFrame(response.json())
         except requests.exceptions.Timeout:
-            logger.warning("Timeout on attempt %s/%s, offset=%s", attempt, retries, offset)
+            logger.warning(
+                "Timeout on attempt %s/%s, offset=%s", attempt, retries, offset
+            )
             if attempt < retries:
                 time.sleep(2**attempt)
             else:
@@ -66,7 +69,9 @@ def fetch_random_sample(n: int) -> pd.DataFrame:
         return pd.DataFrame()
 
     sample_df.drop_duplicates(subset=["Record_ID"], keep="first", inplace=True)
-    logger.info("Requested: %s rows, fetched: %s rows after deduplication", n, len(sample_df))
+    logger.info(
+        "Requested: %s rows, fetched: %s rows after deduplication", n, len(sample_df)
+    )
     return sample_df
 
 

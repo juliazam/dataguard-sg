@@ -1,11 +1,13 @@
-'''Validates data from API'''
+"""Validates data from API"""
+
 import pandas as pd
 from pydantic import ValidationError
 
 from dataguard.models import Payment
 
+
 def validate_payments(df: pd.DataFrame) -> tuple[list[Payment], list[dict]]:
-    '''Validates DataFrame rows and separates them to succesful and failed'''
+    """Validates DataFrame rows and separates them to succesful and failed"""
     column_mapping = {
         "Record_ID": "record_id",
         "Covered_Recipient_Type": "covered_recipient_type",
@@ -26,27 +28,24 @@ def validate_payments(df: pd.DataFrame) -> tuple[list[Payment], list[dict]]:
 
     for _, row in df.iterrows():
         row_dict = row.to_dict()
-        record_id = row_dict.get('Record_ID', 'Unknown')
+        record_id = row_dict.get("Record_ID", "Unknown")
 
         mapped_data = {}
         for api_col, model_field in column_mapping.items():
             val = row_dict.get(api_col)
-            mapped_data[model_field] = (
-                None if pd.isna(val) or val == "nan" else val
-            )
+            mapped_data[model_field] = None if pd.isna(val) or val == "nan" else val
         try:
             payment_obj = Payment(**mapped_data)
             valid_payments.append(payment_obj)
         except ValidationError as e:
-            validation_errors.append(
-                {"record_id": record_id, "error_text": str(e)}
-            )
+            validation_errors.append({"record_id": record_id, "error_text": str(e)})
         except Exception as e:
             validation_errors.append(
                 {"record_id": record_id, "error_text": f"Unexpected error: {e}"}
             )
 
     return valid_payments, validation_errors
+
 
 if __name__ == "__main__":
     # Temporary imports for checking only
@@ -76,8 +75,6 @@ if __name__ == "__main__":
             print(f"Error:\n{error_list[0]['error_text']}")
 
     except ModuleNotFoundError as err:
-        print(
-            f"Error importing modules: {err}.\
+        print(f"Error importing modules: {err}.\
         Make sure the src/dataguard/ folder structure is created\
-        and contains loader.py and models.py files."
-        )
+        and contains loader.py and models.py files.")

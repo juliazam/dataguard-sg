@@ -1,8 +1,10 @@
-'''Checking Payment pydantic model'''
+"""Checking Payment pydantic model"""
+
 # pylint: disable=redefined-outer-name
 import pytest
 from pydantic import ValidationError
 from dataguard.models import Payment
+
 
 @pytest.fixture
 def valid_payment_data():
@@ -21,15 +23,17 @@ def valid_payment_data():
         "program_year": "2024",
     }
 
+
 def test_payment_valid_data_creates_object(valid_payment_data):
-    '''Checks loaded data'''
+    """Checks loaded data"""
     payment = Payment(**valid_payment_data)
 
     assert payment.total_amount_usd == 19223.51
     assert payment.program_year == 2024
 
+
 def test_payment_generates_synthetic_fields(valid_payment_data):
-    '''Checks calculated data'''
+    """Checks calculated data"""
     payment = Payment(**valid_payment_data)
 
     assert payment.transaction_id is not None
@@ -41,6 +45,7 @@ def test_payment_generates_synthetic_fields(valid_payment_data):
         assert payment.is_flagged is True
     else:
         assert payment.is_flagged is False
+
 
 @pytest.fixture
 def invalid_payment_year():
@@ -59,12 +64,14 @@ def invalid_payment_year():
         "program_year": "1999",
     }
 
+
 def test_payment_invalid_program_year_raises(invalid_payment_year):
-    '''Check that invalid year raises ValidationError'''
+    """Check that invalid year raises ValidationError"""
     with pytest.raises(ValidationError) as exc_info:
         Payment(**invalid_payment_year)
 
     assert "program_year" in str(exc_info.value)
+
 
 @pytest.fixture
 def invalid_recipient_type():
@@ -83,8 +90,9 @@ def invalid_recipient_type():
         "program_year": "2024",
     }
 
+
 def test_payment_invalid_recipient_type_raises(invalid_recipient_type):
-    '''Checks that invalid recipient type raises ValidationError'''
+    """Checks that invalid recipient type raises ValidationError"""
     with pytest.raises(ValidationError) as exc_info:
         Payment(**invalid_recipient_type)
 
@@ -107,8 +115,10 @@ def invalid_amount():
         "manufacturer_name": "PharmaCorp",
         "program_year": "2024",
     }
+
+
 def test_payment_negative_amount_behavior(invalid_amount):
-    '''Checks if amount is negative'''
+    """Checks if amount is negative"""
     payment = Payment(**invalid_amount)
 
     assert payment.total_amount_usd == -100.0
