@@ -77,28 +77,28 @@ class Payment(BaseModel):
         return self
 
 
-if __name__ == "__main__":
-    from dataguard.logger import get_logger
+# if __name__ == "__main__":
+#     from dataguard.logger import get_logger
 
-    logger = get_logger(__name__)
-    # Raw data simulation
-    raw_data = {
-        "record_id": "REC12345",
-        "covered_recipient_type": "Covered Recipient Physician",
-        "covered_recipient_first_name": "John",
-        "covered_recipient_last_name": "Doe",
-        "recipient_state": "CA",
-        "recipient_country": "United States",
-        "total_amount_usd": "19223.51",  # str -> float
-        "date_of_payment": "08/22/2024",  # str MM/DD/YYYY -> date
-        "nature_of_payment": "Consulting fee",
-        "form_of_payment": "Cash or cash equivalent",
-        "manufacturer_name": "PharmaCorp",
-        "program_year": "2024",  # str -> int
-    }
+#     logger = get_logger(__name__)
+#     # Raw data simulation
+#     raw_data = {
+#         "record_id": "REC12345",
+#         "covered_recipient_type": "Covered Recipient Physician",
+#         "covered_recipient_first_name": "John",
+#         "covered_recipient_last_name": "Doe",
+#         "recipient_state": "CA",
+#         "recipient_country": "United States",
+#         "total_amount_usd": "19223.51",  # str -> float
+#         "date_of_payment": "08/22/2024",  # str MM/DD/YYYY -> date
+#         "nature_of_payment": "Consulting fee",
+#         "form_of_payment": "Cash or cash equivalent",
+#         "manufacturer_name": "PharmaCorp",
+#         "program_year": "2024",  # str -> int
+#     }
 
-    # Model initialization (Pydantic v2)
-    payment_obj = Payment(**raw_data)
+#     # Model initialization (Pydantic v2)
+#     payment_obj = Payment(**raw_data)
 
-    # Print result in JSON
-    logger.debug(payment_obj.model_dump_json(indent=2))
+#     # Print result in JSON
+#     logger.debug(payment_obj.model_dump_json(indent=2))

@@ -1,6 +1,8 @@
+# mypy: ignore-errors
 """Checks dataset expectations"""
 
 from pathlib import Path
+from typing import Any
 import pandas as pd
 import great_expectations as ge
 import yaml
@@ -17,7 +19,7 @@ with open(_CONFIG_PATH, "r", encoding="utf-8") as f:
     settings = yaml.safe_load(f)
 
 
-def run_expectations(df: pd.DataFrame) -> dict:
+def run_expectations(df: pd.DataFrame) -> dict[str, Any]:
     """Validates df"""
     df = df.copy()
     df["Total_Amount_of_Payment_USDollars"] = pd.to_numeric(

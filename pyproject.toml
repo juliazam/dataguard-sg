@@ -42,6 +42,14 @@ python_version = "3.11"
 strict = true
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "great_expectations.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "dataguard.ge_validator"
+ignore_errors = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]

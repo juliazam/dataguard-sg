@@ -11,7 +11,7 @@ with open(_CONFIG_PATH, "r", encoding="utf-8") as f:
     config = yaml.safe_load(f)
 
 
-def main():
+def main() -> None:
     """Entry point for running the pipeline with a configurable row count."""
     parser = argparse.ArgumentParser(description="Program description")
     default_batch = config.get("pipeline", {}).get("batch_size", 500)

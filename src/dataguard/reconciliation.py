@@ -1,11 +1,14 @@
 """Reconciles data pipeline row counts to ensure no records were lost or duplicated."""
 
+from typing import Any
 from dataguard.logger import get_logger
 
 logger = get_logger(__name__)
 
 
-def reconcile_counts(rows_fetched: int, rows_valid: int, rows_invalid: int) -> dict:
+def reconcile_counts(
+    rows_fetched: int, rows_valid: int, rows_invalid: int
+) -> dict[str, Any]:
     """Reconciles data pipeline row counts
     to ensure no records were lost or duplicated."""
     rows_accounted = rows_valid + rows_invalid

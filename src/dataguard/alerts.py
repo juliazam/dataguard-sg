@@ -1,6 +1,7 @@
 """Alerting"""
 
 from pathlib import Path
+from typing import Any
 import yaml
 from dataguard.logger import get_logger
 
@@ -12,7 +13,9 @@ with open(config_path, "r", encoding="utf-8") as f:
     config = yaml.safe_load(f)
 
 
-def check_and_alert(rows_fetched: int, rows_invalid: int, ge_success: bool) -> dict:
+def check_and_alert(
+    rows_fetched: int, rows_invalid: int, ge_success: bool
+) -> dict[str, Any]:
     """Evaluates the pipeline run against data quality thresholds
     and triggers alerts if requirements are violated."""
 

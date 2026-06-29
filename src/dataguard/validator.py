@@ -1,12 +1,13 @@
 """Validates data from API"""
 
 import pandas as pd
+from typing import Any
 from pydantic import ValidationError
 
 from dataguard.models import Payment
 
 
-def validate_payments(df: pd.DataFrame) -> tuple[list[Payment], list[dict]]:
+def validate_payments(df: pd.DataFrame) -> tuple[list[Payment], list[dict[str, Any]]]:
     """Validates DataFrame rows and separates them to succesful and failed"""
     column_mapping = {
         "Record_ID": "record_id",

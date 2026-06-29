@@ -1,5 +1,6 @@
 """Lineage"""
 
+from typing import Any
 from datetime import datetime, timezone
 from pathlib import Path
 import tomllib
@@ -25,7 +26,7 @@ class LineageRecord(BaseModel):
     source_name: str  # Name of the data source
     source_url: str  # URL where the data was fetched from
     timestamp: datetime
-    details: dict
+    details: dict[str, Any]
     pipeline_version: str  # Version parsed from pyproject.toml
 
 
@@ -38,7 +39,7 @@ class LineageTracker:
         self._file_path = self._output_dir / "lineage_log.jsonl"
 
     @property
-    def file_path(self):
+    def file_path(self) -> Path:
         """Returns private _file_path variable"""
         return self._file_path
 
@@ -68,7 +69,7 @@ class LineageTracker:
 
 
 def create_lineage_record(
-    pipeline_run_id: str, step_name: str, details: dict
+    pipeline_run_id: str, step_name: str, details: dict[str, Any]
 ) -> LineageRecord:
     """Create lineage record"""
     toml_path = _PROJECT_ROOT / "pyproject.toml"

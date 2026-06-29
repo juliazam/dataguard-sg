@@ -14,7 +14,7 @@ with open(_CONFIG_PATH, "r", encoding="utf-8") as f:
     settings = yaml.safe_load(f)
 
 
-def profile_dataset(df: pd.DataFrame, output_path: str) -> None:
+def profile_dataset(df: pd.DataFrame, output_path: Path) -> None:
     """Creates dataset profile"""
     output_path.mkdir(exist_ok=True)
     report_filepath = output_path / "profile_report.html"

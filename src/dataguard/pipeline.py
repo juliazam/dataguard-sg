@@ -3,6 +3,7 @@
 import json
 import uuid
 from pathlib import Path
+from typing import Any
 import pandas as pd
 import yaml
 from dataguard.alerts import check_and_alert
@@ -23,7 +24,7 @@ def load_last_offset(path: Path) -> int:
     try:
         with open(path, "r", encoding="utf-8") as file:
             data = json.load(file)
-            return data.get("last_offset", 0)
+            return int(data.get("last_offset", 0))
     except (json.JSONDecodeError, TypeError):
         return 0
 
@@ -39,7 +40,7 @@ def save_last_offset(path: Path, new_offset: int) -> None:
         json.dump(data, file, indent=2, ensure_ascii=False)
 
 
-def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict:
+def run_pipeline(n_rows: int, output_dir: Path | None = None) -> dict[str, Any]:
     """Runs pipeline"""
     project_root = Path(__file__).resolve().parents[2]
     config_path = project_root / "config.yaml"

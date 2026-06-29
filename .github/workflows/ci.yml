@@ -27,6 +27,9 @@ jobs:
             
             -   name: flake8 check
                 run: flake8 src/ tests/
+            
+            -   name: mypy check
+                run: mypy src/ --explicit-package-bases
 
             -   name: Run tests
                 run: pytest -v --cov=src --cov-report=term-missing
